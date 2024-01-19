@@ -64,7 +64,7 @@ stages:
 
 
 - stage: 'wiz_IaC_Kubernetes_scan'
-  dependsOn: wiz_container_scan  
+  dependsOn: Push_to_Registry  
   displayName: 'wiz IaC Kubernetes scan'
   jobs:
   - job: 'wiz_IaC_Kubernetes_scan'
