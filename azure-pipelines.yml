@@ -9,45 +9,30 @@ variables:
   tag: '$(Build.BuildId)'
 
 stages:
-- stage: Build
-  displayName: Build image
+- stage: Build_and_WizContainerScan
+  displayName: Build and Scan Image
   jobs:
-  - job: Build
-    displayName: Build
+  - job: Build_and_Scan_Image
+    displayName: Build and Scan
     pool:
       vmImage: ubuntu-latest
     steps:
     - task: Docker@2
-      displayName: Build an image
+      displayName: Build Docker Image
       inputs:
         containerRegistry: 'K8SExamplesACR'
         repository: '$(imageRepo)'
-        command: 'buildAndPush'
+        command: 'build'
         Dockerfile: '$(Build.SourcesDirectory)/app/Dockerfile'
         tags: |
           $(tag)
           latest
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(Pipeline.Workspace)/s/kubernetes'
-        artifact: 'manifests'
-        publishLocation: 'pipeline'     
 
-- stage: 'wiz_container_scan'
-  dependsOn: Build
-  displayName: 'wiz container scan'
-  jobs:
-  - job: 'wiz_container_scan'
-    displayName: 'wiz container scan'
-    pool:
-      vmImage: ubuntu-latest
-    steps:
     - script: |
         # Install Wiz CLI
         curl -o wizcli https://wizcli.app.wiz.io/wizcli
         chmod +x wizcli
 
-    - script: |
         # Authenticate to the Wiz API
         ./wizcli auth --id $(WIZ_CLIENT_ID) --secret $(WIZ_CLIENT_SECRET)
       env:
@@ -57,6 +42,25 @@ stages:
     - script: |
         # Scan Docker Image
         ./wizcli docker scan --image K8SExamplesACR.azurecr.io/$(imageRepo):$(tag)
+
+- stage: Push_to_Registry
+  displayName: Push to Registry
+  dependsOn: Build_and_WizContainerScan
+  jobs:
+  - job: Push_to_Registry
+    displayName: Push to Registry
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: Docker@2
+      displayName: Push Docker Image to Registry
+      inputs:
+        containerRegistry: 'K8SExamplesACR'
+        repository: '$(imageRepo)'
+        command: 'push'
+        tags: |
+          $(tag)
+          latest
 
 
 - stage: 'wiz_IaC_Kubernetes_scan'
