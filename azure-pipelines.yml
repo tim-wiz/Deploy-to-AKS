@@ -59,7 +59,7 @@ stages:
         ./wizcli docker scan --image docker.io/tim4wiz/wizdemo:1.0
 
 - stage: 'wiz_IaC_Kubernetes_scan'
-  dependsOn: wiz_container-scan  
+  dependsOn: wiz_container_scan  
   displayName: 'wiz IaC Kubernetes scan'
   jobs:
   - job: 'wiz_IaC_Kubernetes_scan'
