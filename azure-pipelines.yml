@@ -33,10 +33,10 @@ stages:
         artifact: 'manifests'
         publishLocation: 'pipeline'     
 
-- stage: 'wiz container scan'
+- stage: 'wiz_container_scan'
   displayName: 'wiz container scan'
   jobs:
-  - job: 'wiz-container-scan'
+  - job: 'wiz_container_scan'
     displayName: 'wiz container scan'
     pool:
       vmImage: ubuntu-latest
@@ -57,10 +57,10 @@ stages:
         # Scan Docker Image
         ./wizcli docker scan --image docker.io/tim4wiz/wizdemo:1.0
 
-- stage: 'wiz IaC Kubernetes scan'
+- stage: 'wiz_IaC_Kubernetes_scan'
   displayName: 'wiz IaC Kubernetes scan'
   jobs:
-  - job: 'wiz-IaC-Kubernetes-scan'
+  - job: 'wiz_IaC_Kubernetes_scan'
     displayName: 'wiz container scan'
     pool:
       vmImage: ubuntu-latest
