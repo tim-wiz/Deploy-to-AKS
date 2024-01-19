@@ -38,6 +38,10 @@ stages:
       env:
         WIZ_CLIENT_ID: $(WIZ_CLIENT_ID)
         WIZ_CLIENT_SECRET: $(WIZ_CLIENT_SECRET)
+    - script: |
+        echo "Docker Images on the Agent:"
+        docker images
+      displayName: 'List Docker Images'
 
     - script: |
         # Scan Docker Image
