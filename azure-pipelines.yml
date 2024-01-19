@@ -56,7 +56,8 @@ stages:
 
     - script: |
         # Scan Docker Image
-        ./wizcli docker scan --image docker.io/tim4wiz/wizdemo:1.0
+        ./wizcli docker scan --image K8SExamplesACR.azurecr.io/$(imageRepo):$(tag)
+
 
 - stage: 'wiz_IaC_Kubernetes_scan'
   dependsOn: wiz_container_scan  
