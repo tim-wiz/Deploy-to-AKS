@@ -33,6 +33,63 @@ stages:
         artifact: 'manifests'
         publishLocation: 'pipeline'     
 
+- stage: 'wiz container scan'
+  displayName: 'wiz container scan'
+  jobs:
+  - job: 'wiz-container-scan'
+    displayName: 'wiz container scan'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - script: |
+        # Install Wiz CLI
+        curl -o wizcli https://wizcli.app.wiz.io/wizcli
+        chmod +x wizcli
+
+    - script: |
+        # Authenticate to the Wiz API
+        ./wizcli auth --id $(WIZ_CLIENT_ID) --secret $(WIZ_CLIENT_SECRET)
+      env:
+        WIZ_CLIENT_ID: $(WIZ_CLIENT_ID)
+        WIZ_CLIENT_SECRET: $(WIZ_CLIENT_SECRET)
+
+    - script: |
+        # Scan Docker Image
+        ./wizcli docker scan --image docker.io/tim4wiz/wizdemo:1.0
+
+- stage: 'wiz IaC Kubernetes scan'
+  displayName: 'wiz IaC Kubernetes scan'
+  jobs:
+  - job: 'wiz-IaC-Kubernetes-scan'
+    displayName: 'wiz container scan'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - script: |
+        # Install Wiz CLI
+        curl -o wizcli https://wizcli.app.wiz.io/wizcli
+        chmod +x wizcli
+
+    - script: |
+        # Authenticate to the Wiz API
+        ./wizcli auth --id $(WIZ_CLIENT_ID) --secret $(WIZ_CLIENT_SECRET)
+      env:
+        WIZ_CLIENT_ID: $(WIZ_CLIENT_ID)
+        WIZ_CLIENT_SECRET: $(WIZ_CLIENT_SECRET)
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'specific'
+        project: 'Experiments'
+        pipeline: $(Build.BuildId)  
+        artifactName: 'manifests'
+        targetPath: '$(Pipeline.Workspace)/manifests'
+
+    - script: |
+        # Scan Kubernetes Manifests
+        ./wizcli iac scan 
+
+
 - stage: Deploy
   displayName: Deploy to Dev
   dependsOn: Build
