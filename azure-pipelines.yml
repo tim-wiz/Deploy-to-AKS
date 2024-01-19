@@ -25,8 +25,16 @@ stages:
         command: 'build'
         Dockerfile: '$(Build.SourcesDirectory)/app/Dockerfile'
         tags: |
-          $(tag)
+          # $(tag)
           latest
+
+    - script: |
+        # Capture the Docker image name and tag into variables
+        imageName=$(imageRepo)
+        imageTag=$(tag)
+        echo "Docker Image Name: $imageName"
+        echo "Docker Image Tag: $imageTag"
+      displayName: 'Capture Image Info'    
 
     - script: |
         # Install Wiz CLI
@@ -45,7 +53,7 @@ stages:
 
     - script: |
         # Scan Docker Image
-        ./wizcli docker scan --image $(imageRepo)/sampleapp:latest
+        ./wizcli docker scan --image $imageName:latest
         # K8SExamplesACR.azurecr.io/$(imageRepo):$(tag)
 
 - stage: Push_to_Registry
