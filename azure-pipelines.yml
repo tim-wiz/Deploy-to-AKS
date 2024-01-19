@@ -41,7 +41,8 @@ stages:
 
     - script: |
         # Scan Docker Image
-        ./wizcli docker scan --image K8SExamplesACR.azurecr.io/$(imageRepo):$(tag)
+        ./wizcli docker scan --image ***/sampleapp:latest
+        # K8SExamplesACR.azurecr.io/$(imageRepo):$(tag)
 
 - stage: Push_to_Registry
   displayName: Push to Registry
