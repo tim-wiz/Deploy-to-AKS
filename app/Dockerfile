@@ -1,6 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /app
 
+# adding vuln packages
+RUN apt-get update && apt-get install -y ca-certificates apt-transport-https
+
 # Copy csproj and restore as distinct layers
 COPY SampleWebApp/*.csproj .
 RUN dotnet restore
