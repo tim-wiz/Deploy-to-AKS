@@ -25,7 +25,7 @@ stages:
         command: 'build'
         Dockerfile: '$(Build.SourcesDirectory)/app/Dockerfile'
         tags: |
-          # $(tag)
+          $(tag)
           latest
 
     - script: |
